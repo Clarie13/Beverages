@@ -8,6 +8,12 @@ export default function CountryPage() {
 
   const country = code ? countryRegistry[code] ?? null : null
 
+  // 🔹 Handle state click → go to StatePage
+  const handleStateClick = (stateName: string) => {
+    const slug = stateName.toLowerCase().replace(/\s+/g, "-")
+    navigate(`/country/${code}/state/${slug}`)
+  }
+
   if (!country) {
     return <div className="p-6">Country not found</div>
   }
@@ -41,38 +47,40 @@ export default function CountryPage() {
       <div className="mt-4 w-full h-[500px]">
         <ResponsiveContainer width="100%" height="100%">
           <Treemap
-            data={country.states}
+            data={country.states || []}
             dataKey="value"
             stroke="#ffffff"
             aspectRatio={4 / 3}
-            content={({ x, y, width, height, name }: any) => {
-              return (
-                <g>
-                  {/* Block */}
-                  <rect
-                    x={x}
-                    y={y}
-                    width={width}
-                    height={height}
-                    fill="#3b82f6"
-                  />
+           content={({ x, y, width, height, name }: any) => {
+  return (
+    <g
+      onClick={() => handleStateClick(name)}
+      style={{ cursor: "pointer" }}
+    >
+      {/* Block */}
+      <rect
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        fill="#3b82f6"
+      />
 
-                  {/* Show text only if space is enough */}
-                  {width > 40 && height > 25 && (
-                    <text
-                      x={x + width / 2}
-                      y={y + height / 2}
-                      textAnchor="middle"
-                      fill="white"
-                      fontSize={12}
-                      fontWeight="normal"
-                    >
-                      {name}
-                    </text>
-                  )}
-                </g>
-              )
-            }}
+      {/* Show text only if space is enough */}
+      {width > 40 && height > 25 && (
+        <text
+          x={x + width / 2}
+          y={y + height / 2}
+          textAnchor="middle"
+          fill="white"
+          fontSize={12}
+        >
+          {name}
+        </text>
+      )}
+    </g>
+  )
+}}
           />
         </ResponsiveContainer>
       </div>

@@ -5,6 +5,7 @@ import MapView from "./components/MapView"
 import CountryPage from "./pages/CountryPage"
 import { useState } from "react"
 import type { AsiaCountry } from "./data/asiaCountries"
+import StatePage from "./pages/StatePage"
 
 export default function App() {
   const [selectedCountry, setSelectedCountry] =
@@ -33,6 +34,13 @@ export default function App() {
 
       {/* 🌍 COUNTRY PAGE */}
       <Route path="/country/:code" element={<CountryPage />} />
+
+      {/*state page*/}
+      <Route 
+  path="/country/:countryCode/state/:stateName" 
+  element={<StatePage />} 
+/>
+
     </Routes>
   )
 }
