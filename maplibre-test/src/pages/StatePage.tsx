@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom"
 import beveragesByState from "../data/countries/india/beverages"
+import { countryRegistry } from "../data/countries/registry" // ✅ added
 
 export default function StatePage() {
   const { countryCode, stateName } = useParams<{
@@ -10,40 +11,73 @@ export default function StatePage() {
   const navigate = useNavigate()
 
   if (!countryCode || !stateName) {
-    return <div className="p-6">Invalid route</div>
+    return <div className="p-6 text-red-500">Invalid route</div>
   }
 
-  // 🔹 Get beverages for this state
+  const country = countryRegistry[countryCode] // ✅ added
+
   const beverages = beveragesByState[stateName] || []
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gray-50">
 
-      {/* 🔙 Back */}
-      <button
-        onClick={() => navigate(-1)}
-        className="mb-6 px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-md"
-      >
-        ← Back
-      </button>
+      {/* 🔝 HEADER */}
+      <div className="bg-white shadow-sm border-b sticky top-0 z-10">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center gap-4">
 
-      {/* 🏷️ Title */}
-      <h1 className="text-3xl font-bold capitalize">
-        {stateName.replace("-", " ")}
-      </h1>
+          {/* 🔙 Back Button */}
+          <button
+            onClick={() => navigate(-1)}
+            className="absolute left-4 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium"
+          >
+            ← Back
+          </button>
 
-      {/* 🍹 Beverage List */}
-      <h2 className="mt-6 text-xl font-semibold">Beverages</h2>
+          {/* 🌍 Country Name */}
+          <div className="flex items-center gap-4">
+            <img
+              src={`https://flagcdn.com/w40/${country?.flag}.png`}
+              alt={country?.name}
+              className="rounded"
+            />
+          <h1 className="text-2xl font-bold capitalize">
+            {country?.name || countryCode} {/* ✅ changed */}
+          </h1>
+          </div>
+        </div>
+      </div>
 
-      {beverages.length === 0 ? (
-        <p className="mt-2 text-gray-500">No beverages found</p>
-      ) : (
-        <ul className="mt-4 list-disc list-inside space-y-2">
-          {beverages.map((drink, index) => (
-            <li key={index}>{drink}</li>
-          ))}
-        </ul>
-      )}
+      {/* 📦 CONTENT */}
+      <div className="max-w-4xl mx-auto px-6 py-8 min-h-screen bg-blue-100">
+
+        {/* 🏷️ State Name */}
+        <h2 className="text-3xl font-semibold capitalize text-gray-800">
+          {stateName.replace("-", " ")}
+        </h2>
+
+        {/* 🍹 Section Title */}
+        <h3 className="mt-6 text-xl font-semibold text-gray-700">
+          Beverages
+        </h3>
+
+        {/* 📋 Beverage List */}
+        {beverages.length === 0 ? (
+          <p className="mt-3 text-gray-500 italic">
+            No beverages found
+          </p>
+        ) : (
+          <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {beverages.map((drink, index) => (
+              <li
+                key={index}
+                className="bg-white p-4 rounded-xl shadow-sm border hover:shadow-md transition"
+              >
+                {drink}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   )
 }

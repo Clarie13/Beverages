@@ -8,83 +8,93 @@ export default function CountryPage() {
 
   const country = code ? countryRegistry[code] ?? null : null
 
-  // 🔹 Handle state click → go to StatePage
   const handleStateClick = (stateName: string) => {
     const slug = stateName.toLowerCase().replace(/\s+/g, "-")
     navigate(`/country/${code}/state/${slug}`)
   }
 
   if (!country) {
-    return <div className="p-6">Country not found</div>
+    return <div className="p-6 text-red-500">Country not found</div>
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div className="min-h-screen bg-sky-50">
 
-      {/* 🔙 Back */}
-      <button
-        onClick={() => navigate("/")}
-        className="mb-6 px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-md"
-      >
-        ← Back
-      </button>
+      {/* 🔝 HEADER */}
+      <div className="bg-white shadow-sm border-b sticky top-0 z-10">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center gap-4">
 
-      {/* 🇮🇳 Header */}
-      <div className="flex items-center gap-4">
-        <img
-          src={`https://flagcdn.com/w40/${country.flag}.png`}
-          alt={country.name}
-          className="rounded"
-        />
-        <h1 className="text-3xl font-serif font-bold">
-          {country.name}
-        </h1>
+          {/* 🔙 Back Button */}
+          <button
+            onClick={() => navigate("/")}
+            className="absolute left-4 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium"
+          >
+            ← Back
+          </button>
+
+          {/* 🇮🇳 Flag + Country Name */}
+          <div className="flex items-center gap-2">
+            <img
+              src={`https://flagcdn.com/w40/${country.flag}.png`}
+              alt={country.name}
+              className="rounded"
+            />
+            <h1 className="text-2xl font-bold capitalize">
+              {country.name}
+            </h1>
+          </div>
+
+        </div>
       </div>
 
-      {/* 🟦 STATES TREEMAP */}
-      <h2 className="mt-10 text-xl font-semibold">States</h2>
+      {/* 📦 CONTENT */}
+      <div className="max-w-6xl mx-auto px-6 py-8">
 
-      <div className="mt-4 w-full h-[500px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <Treemap
-            data={country.states || []}
-            dataKey="value"
-            stroke="#ffffff"
-            aspectRatio={4 / 3}
-           content={({ x, y, width, height, name }: any) => {
-  return (
-    <g
-      onClick={() => handleStateClick(name)}
-      style={{ cursor: "pointer" }}
-    >
-      {/* Block */}
-      <rect
-        x={x}
-        y={y}
-        width={width}
-        height={height}
-        fill="#3b82f6"
-      />
+        {/* 🟦 STATES TITLE */}
+        <h2 className="text-xl font-semibold text-gray-700">
+          States
+        </h2>
 
-      {/* Show text only if space is enough */}
-      {width > 40 && height > 25 && (
-        <text
-          x={x + width / 2}
-          y={y + height / 2}
-          textAnchor="middle"
-          fill="white"
-          fontSize={12}
-        >
-          {name}
-        </text>
-      )}
-    </g>
-  )
-}}
-          />
-        </ResponsiveContainer>
+        {/* 🟦 TREEMAP */}
+        <div className="mt-4 w-full h-[500px] bg-white rounded-xl shadow-sm border p-2">
+          <ResponsiveContainer width="100%" height="100%">
+            <Treemap
+              data={country.states || []}
+              dataKey="value"
+              stroke="#ffffff"
+              aspectRatio={4 / 3}
+              isAnimationActive={false} // ✅ animation removed
+              content={({ x, y, width, height, name }: any) => (
+                <g
+                  onClick={() => handleStateClick(name)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <rect
+                    x={x}
+                    y={y}
+                    width={width}
+                    height={height}
+                    fill="#3b82f6"
+                  />
+
+                  {width > 40 && height > 25 && (
+                    <text
+                      x={x + width / 2}
+                      y={y + height / 2}
+                      textAnchor="middle"
+                      fill="white"
+                      fontSize={12}
+                    >
+                      {name}
+                    </text>
+                  )}
+                </g>
+              )}
+            />
+          </ResponsiveContainer>
+        </div>
+
       </div>
-
     </div>
   )
 }
